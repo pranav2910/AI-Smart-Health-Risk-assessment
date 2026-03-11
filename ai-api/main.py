@@ -5,6 +5,39 @@ import joblib
 import numpy as np
 import pandas as pd
 
+def get_extended_interpretations(data):
+    # 'data' is the dictionary of inputs (Age, BMI, BP, etc.)
+    results = []
+    
+    # 1. Hypertension Status
+    sbp = data.get('systolic_bp', 0)
+    dbp = data.get('diastolic_bp', 0)
+    if sbp >= 140 or dbp >= 90:
+        results.append("Hypertension Status: High Risk (Stage 2)")
+    elif sbp >= 130 or dbp >= 80:
+        results.append("Hypertension Status: Elevated (Stage 1)")
+    else:
+        results.append("Hypertension Status: Normal")
+
+    # 2. Metabolic Syndrome (3+ factors = High Risk)
+    met_score = 0
+    if data.get('bmi', 0) >= 30: met_score += 1
+    if sbp >= 130 or dbp >= 85: met_score += 1
+    if data.get('glucose', 0) >= 100: met_score += 1
+    if data.get('cholesterol', 0) >= 200: met_score += 1
+    
+    results.append(f"Metabolic Syndrome: {'High Risk' if met_score >= 3 else 'Low Risk'}")
+
+    # 3. Cardiovascular Risk
+    age = data.get('age', 0)
+    chol = data.get('cholesterol', 0)
+    if age > 50 and (sbp >= 140 or chol >= 240):
+        results.append("Cardiovascular Risk: High")
+    else:
+        results.append("Cardiovascular Risk: Normal")
+
+    return results
+
 # -------------------------------
 # Load saved XGBoost ML pipeline
 # -------------------------------
@@ -80,11 +113,11 @@ def risk_level(prob, glucose, hba1c):
 
     # Combine them for final risk category
     if gl_status == "Diabetic" or a1c_status == "Diabetic" or prob >= 0.66:
-        final = "High Risk (Diabetic)"
+        final = "High Risk "
     elif gl_status == "Prediabetic" or a1c_status == "Prediabetic" or prob >= 0.33:
-        final = "Moderate Risk (Prediabetic)"
+        final = "Moderate Risk"
     else:
-        final = "Low Risk (Normal)"
+        final = "Low Risk"
 
     return ml_risk, final, gl_status, a1c_status
 
@@ -115,7 +148,33 @@ def generate_recommendations(risk):
             "Consider a low-glycemic diet.",
             "Check HbA1c every 3 months."
         ]
+    
+def get_extended_analysis(data):
+    sbp = getattr(data, 'systolic_bp', 0)
+    dbp = getattr(data, 'diastolic_bp', 0)
 
+    # 1. Hypertension Status
+    if sbp >= 140 or dbp >= 90:
+        hyp = "High Risk (Stage 2)"
+    elif sbp >= 130 or dbp >= 80:
+        hyp = "Elevated (Stage 1)"
+    else:
+        hyp = "Normal"
+
+    # 2. Metabolic Syndrome
+    met_score = 0
+    if getattr(data, 'bmi', 0) >= 30: met_score += 1
+    if sbp >= 130 or dbp >= 85: met_score += 1
+    if getattr(data, 'glucose', 0) >= 100: met_score += 1
+    if getattr(data, 'cholesterol', 0) >= 200: met_score += 1
+    met = "High Risk" if met_score >= 3 else "Low Risk"
+
+    # 3. Cardiovascular Risk
+    age = getattr(data, 'age', 0)
+    chol = getattr(data, 'cholesterol', 0)
+    cardio = "Elevated" if age > 50 and (sbp >= 140 or chol >= 240) else "Normal"
+
+    return {"hypertension_status": hyp, "metabolic_syndrome": met, "cardiovascular_risk": cardio}
 # -------------------------------
 # Prediction Endpoint
 # -------------------------------
@@ -137,7 +196,9 @@ def predict(data: DiabetesInput):
     )
 
     # Recommendations
+    # Define the extended variable by calling the analysis function 
     recs = generate_recommendations(final_risk)
+    extended = get_extended_analysis(data)  
 
     return {
         "summary": {
@@ -150,7 +211,11 @@ def predict(data: DiabetesInput):
         },
         "clinical_analysis": {
             "glucose_status": gl_status,
-            "hba1c_status": a1c_status
+            "hba1c_status": a1c_status,
+            
+            "hypertension_status": extended["hypertension_status"],
+            "metabolic_syndrome": extended["metabolic_syndrome"],
+            "cardiovascular_risk": extended["cardiovascular_risk"]
         },
         "recommendations": recs
     }

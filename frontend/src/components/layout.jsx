@@ -39,7 +39,7 @@ export default function Layout({ children }) {
       >
         <Toolbar>
           <Typography variant="h6" sx={{ fontWeight: 700 }}>
-            SmartDiab
+            AI Agent
           </Typography>
         </Toolbar>
 
@@ -51,12 +51,7 @@ export default function Layout({ children }) {
             <ListItemText primary="Predict" />
           </ListItem>
 
-          <ListItem button onClick={() => navigate("/HealthMetrics")}>
-            <ListItemIcon sx={{ color: "white" }}>
-              <MonitorHeartIcon />
-            </ListItemIcon>
-            <ListItemText primary="Health Metrics" />
-          </ListItem>
+          
 
           <ListItem button onClick={() => navigate("/trends")}>
             <ListItemIcon sx={{ color: "white" }}>

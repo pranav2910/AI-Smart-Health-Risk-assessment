@@ -59,7 +59,11 @@ export default function ResultCard({ result }) {
           <List dense>
             <ListItem>- Glucose Status: {clinical_analysis.glucose_status}</ListItem>
             <ListItem>- HbA1c Status: {clinical_analysis.hba1c_status}</ListItem>
-          </List>
+            <ListItem>- Hypertension Status: {clinical_analysis.hypertension_status}</ListItem>
+            <ListItem>- Metabolic Syndrome: {clinical_analysis.metabolic_syndrome}</ListItem>
+            <ListItem>- Cardiovascular Risk: {clinical_analysis.cardiovascular_risk}</ListItem>
+            </List>
+    
 
           <Divider sx={{ my: 2 }} />
 

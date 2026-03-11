@@ -89,7 +89,7 @@ export default function InputForm({ onResult }) {
                 fontWeight: 600,
               }}
             >
-              Predict Diabetes Risk
+              Predict Risk
             </Button>
           </Box>
         </CardContent>
