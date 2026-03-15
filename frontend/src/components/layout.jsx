@@ -13,7 +13,6 @@ import {
 } from "@mui/material";
 
 import DashboardIcon from "@mui/icons-material/Dashboard";
-import MonitorHeartIcon from "@mui/icons-material/MonitorHeart";
 import TimelineIcon from "@mui/icons-material/Timeline";
 
 const drawerWidth = 240;
@@ -51,8 +50,6 @@ export default function Layout({ children }) {
             <ListItemText primary="Predict" />
           </ListItem>
 
-          
-
           <ListItem button onClick={() => navigate("/trends")}>
             <ListItemIcon sx={{ color: "white" }}>
               <TimelineIcon />
@@ -63,7 +60,13 @@ export default function Layout({ children }) {
       </Drawer>
 
       {/* Main Content */}
-      <Box sx={{ flexGrow: 1, backgroundColor: "#F5F7FA", minHeight: "100vh" }}>
+      <Box
+        sx={{
+          flexGrow: 1,
+          backgroundColor: "#F5F7FA",
+          minHeight: "100vh",
+        }}
+      >
         {/* Top Bar */}
         <AppBar
           position="static"
@@ -75,7 +78,10 @@ export default function Layout({ children }) {
           }}
         >
           <Toolbar>
-            <Typography variant="h6" sx={{ color: "#0D47A1", fontWeight: 600 }}>
+            <Typography
+              variant="h6"
+              sx={{ color: "#0D47A1", fontWeight: 600 }}
+            >
               AI Diabetes Prediction System
             </Typography>
           </Toolbar>
