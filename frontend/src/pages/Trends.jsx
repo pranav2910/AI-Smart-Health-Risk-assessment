@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+
 import {
   Card,
   CardContent,
@@ -7,7 +8,7 @@ import {
 } from "@mui/material";
 import { Line } from "react-chartjs-2";
 import { motion } from "framer-motion";
-import Layout from "../components/Layout";
+import Layout from "../components/layout";
 import { api } from "../api";
 
 // Chart.js imports
